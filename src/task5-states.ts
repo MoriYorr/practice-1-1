@@ -10,7 +10,7 @@ export type AccountState =
 export function canWithdraw(state: AccountState): boolean {
   // Напишите код здесь
   // Подсказка: используйте if / else if, проверяя поле status 
-
+  return state.status === "active"
 }
 
 // Функция получения описания состояния
@@ -19,11 +19,31 @@ export function canWithdraw(state: AccountState): boolean {
 // Для closed: "Счёт закрыт с <closedAt>"
 export function getStatusMessage(state: AccountState): string {
   // Напишите код здесь
+  switch (state.status){
+    case "active":
+      return "Счёт активен. Баланс: " + state.balance + " руб."
+    case "frozen":
+      return "Счёт заморожен. Причина: " + state.reason + ". Баланс: " + state.balance + " руб."
+    default:
+      return "Счёт закрыт с " + state.closedAt
+  }
+
 }
 
 // Функция заморозки счёта
 // Принимает активный счёт и причину, возвращает замороженный счёт
 // Если счёт не активен — возвращает его без изменений
-export function freezeAccount(state: AccountState, reason: string): AccountState {
-  // Напишите код здесь
+export function freezeAccount(
+  state: AccountState,
+  reason: string
+): AccountState {
+  if (state.status === "active") {
+    return {
+      status: "frozen",
+      balance: state.balance,
+      reason: reason
+    };
+  }
+
+  return state;
 }
